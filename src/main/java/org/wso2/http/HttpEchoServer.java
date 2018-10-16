@@ -31,7 +31,7 @@ import static org.wso2.transport.http.netty.contract.Constants.HTTP_SCHEME;
 /**
  * An HTTP server which implemented using wso2 http-transport.
  */
-public class HttpServer {
+public class HttpEchoServer {
 
     private static final int SERVER_PORT = 9090;
 
