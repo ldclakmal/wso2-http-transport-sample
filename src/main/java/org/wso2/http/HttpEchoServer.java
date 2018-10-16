@@ -17,6 +17,7 @@
  */
 package org.wso2.http;
 
+import org.wso2.http.listener.EchoMessageListener;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
 import org.wso2.transport.http.netty.contract.ServerConnectorFuture;
