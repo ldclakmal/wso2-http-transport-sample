@@ -15,10 +15,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.http;
+package lk.avix.http;
 
 import org.apache.log4j.BasicConfigurator;
-import org.wso2.http.listener.EchoMessageListener;
+import lk.avix.http.listener.EchoMessageListener;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
 import org.wso2.transport.http.netty.contract.ServerConnectorFuture;
