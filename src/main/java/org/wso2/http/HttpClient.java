@@ -96,7 +96,7 @@ public class HttpClient {
     private static HttpCarbonMessage createHttpPostReq(String serverHost, int serverPort, String serverPath,
                                                        String payload) {
         HttpCarbonMessage httpPostRequest = new HttpCarbonMessage(
-                new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, serverPath));
+                new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, serverPath));
         httpPostRequest.setProperty(Constants.PROTOCOL, Constants.HTTP_SCHEME);
         httpPostRequest.setProperty(Constants.HTTP_PORT, serverPort);
         httpPostRequest.setProperty(Constants.HTTP_HOST, serverHost);
