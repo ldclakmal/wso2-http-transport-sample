@@ -4,3 +4,4 @@ This repository holds samples of HTTP transport implemented using [WSO2 HTTP Tra
 ## Samples
 1. HTTP Echo Server
 2. HTTP Client
+3. HTTPS Client
