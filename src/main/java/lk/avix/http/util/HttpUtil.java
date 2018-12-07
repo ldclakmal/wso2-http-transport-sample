@@ -1,4 +1,4 @@
-package lk.avix.http;
+package lk.avix.http.util;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -27,11 +27,11 @@ import java.util.stream.Collectors;
 /**
  * HTTP client utilities.
  */
-class HttpUtil {
+public class HttpUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
-    static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
+    public static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
                                   int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);

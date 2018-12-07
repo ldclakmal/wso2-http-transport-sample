@@ -1,4 +1,4 @@
-package lk.avix.http;
+package lk.avix.http.listener;
 
 import lk.avix.http.listener.EchoMessageListener;
 import org.apache.log4j.BasicConfigurator;

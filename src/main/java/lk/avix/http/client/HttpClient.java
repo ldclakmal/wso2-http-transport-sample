@@ -1,5 +1,6 @@
-package lk.avix.http;
+package lk.avix.http.client;
 
+import lk.avix.http.util.HttpUtil;
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
