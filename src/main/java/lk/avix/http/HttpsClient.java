@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.wso2.http;
+package lk.avix.http;
 
 import org.apache.log4j.BasicConfigurator;
 import org.slf4j.Logger;
