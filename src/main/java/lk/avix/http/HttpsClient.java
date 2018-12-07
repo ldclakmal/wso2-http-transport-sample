@@ -21,10 +21,10 @@ public class HttpsClient {
     private static final Logger LOG = LoggerFactory.getLogger(HttpsClient.class);
 
     private static final int SERVER_PORT = 9095;
-    private static final String SERVER_HOST = "127.0.0.1";
+    private static final String SERVER_HOST = "localhost";
     private static final String SERVER_PATH = "/hello/sayHello";
-    private static final String TRUSTSTORE_PATH = "/home/wso2/projects/http-transport-sample/src/main/resources/client-truststore.jks";
-    private static final String TRUSTSTORE_PASS = "wso2carbon";
+    private static final String TRUSTSTORE_PATH = "/home/chanaka/ballerina/bre/security/ballerinaTruststore.p12";
+    private static final String TRUSTSTORE_PASS = "ballerina";
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
@@ -33,8 +33,10 @@ public class HttpsClient {
                 .createHttpClientConnector(new HashMap<>(), getSenderConfigurationForHttp());
 
         String payload = "Test value";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "text/plain");
         String response = HttpUtil.sendPostRequest(httpClientConnector, Constants.HTTP_SCHEME, SERVER_HOST,
-                SERVER_PORT, SERVER_PATH, payload);
+                SERVER_PORT, SERVER_PATH, payload, headers);
         LOG.info("Response: {}", response);
     }
 

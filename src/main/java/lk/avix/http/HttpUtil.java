@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -30,9 +32,12 @@ class HttpUtil {
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
     static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
-                                  int serverPort, String serverPath, String payload) {
+                                  int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                msg.setHeader(entry.getKey(), entry.getValue());
+            }
 
             CountDownLatch latch = new CountDownLatch(1);
             DefaultHttpConnectorListener listener = new DefaultHttpConnectorListener(latch);
@@ -55,10 +60,11 @@ class HttpUtil {
     private static HttpCarbonMessage createHttpPostReq(String serverScheme, String serverHost, int serverPort,
                                                        String serverPath, String payload) {
         HttpCarbonMessage httpPostRequest = new HttpCarbonMessage(
-                new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, serverPath));
+                new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, serverPath));
         httpPostRequest.setProperty(Constants.PROTOCOL, serverScheme);
-        httpPostRequest.setProperty(Constants.HTTP_PORT, serverPort);
         httpPostRequest.setProperty(Constants.HTTP_HOST, serverHost);
+        httpPostRequest.setProperty(Constants.HTTP_PORT, serverPort);
+        httpPostRequest.setProperty(Constants.TO, serverPath);
         httpPostRequest.setProperty(Constants.HTTP_METHOD, Constants.HTTP_POST_METHOD);
 
         ByteBuffer byteBuffer = ByteBuffer.wrap(payload.getBytes(Charset.forName("UTF-8")));

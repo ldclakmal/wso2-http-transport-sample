@@ -19,7 +19,7 @@ public class HttpClient {
     private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
 
     private static final int SERVER_PORT = 9095;
-    private static final String SERVER_HOST = "127.0.0.1";
+    private static final String SERVER_HOST = "localhost";
     private static final String SERVER_PATH = "/hello/sayHello";
 
     public static void main(String[] args) {
@@ -29,8 +29,10 @@ public class HttpClient {
                 .createHttpClientConnector(new HashMap<>(), getSenderConfigurationForHttps());
 
         String payload = "Test value";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "text/plain");
         String response = HttpUtil.sendPostRequest(httpClientConnector, Constants.HTTPS_SCHEME, SERVER_HOST,
-                SERVER_PORT, SERVER_PATH, payload);
+                SERVER_PORT, SERVER_PATH, payload, headers);
         LOG.info("Response: {}", response);
     }
 
