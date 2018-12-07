@@ -28,32 +28,38 @@ import org.wso2.transport.http.netty.contractimpl.DefaultHttpWsConnectorFactory;
 
 import java.util.HashMap;
 
-/**
- * An HTTP client which implemented using wso2 http-transport.
- */
-public class HttpClient {
+import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
+/**
+ * An HTTPS client which implemented using wso2 http-transport.
+ */
+public class HttpsClient {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsClient.class);
 
     private static final int SERVER_PORT = 9095;
     private static final String SERVER_HOST = "127.0.0.1";
     private static final String SERVER_PATH = "/hello/sayHello";
+    private static final String TRUSTSTORE_PATH = "/home/wso2/projects/http-transport-sample/src/main/resources/client-truststore.jks";
+    private static final String TRUSTSTORE_PASS = "wso2carbon";
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
         HttpClientConnector httpClientConnector = factory
-                .createHttpClientConnector(new HashMap<>(), getSenderConfigurationForHttps());
+                .createHttpClientConnector(new HashMap<>(), getSenderConfigurationForHttp());
 
         String payload = "Test value";
-        String response = HttpUtil.sendPostRequest(httpClientConnector, Constants.HTTPS_SCHEME, SERVER_HOST,
+        String response = HttpUtil.sendPostRequest(httpClientConnector, Constants.HTTP_SCHEME, SERVER_HOST,
                 SERVER_PORT, SERVER_PATH, payload);
         LOG.info("Response: {}", response);
     }
 
-    private static SenderConfiguration getSenderConfigurationForHttps() {
+    private static SenderConfiguration getSenderConfigurationForHttp() {
         SenderConfiguration senderConfiguration = new SenderConfiguration();
-        senderConfiguration.setScheme(Constants.HTTP_SCHEME);
+        senderConfiguration.setTrustStoreFile(TRUSTSTORE_PATH);
+        senderConfiguration.setTrustStorePass(TRUSTSTORE_PASS);
+        senderConfiguration.setScheme(HTTPS_SCHEME);
         return senderConfiguration;
     }
 }
