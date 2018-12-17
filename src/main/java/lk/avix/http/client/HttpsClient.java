@@ -46,6 +46,9 @@ public class HttpsClient {
         senderConfiguration.setTrustStoreFile(TRUSTSTORE_PATH);
         senderConfiguration.setTrustStorePass(TRUSTSTORE_PASS);
         senderConfiguration.setScheme(HTTPS_SCHEME);
+        // Enable following property if the SERVER_HOST is an IP address. Since this is not recommended, please provide
+        // an valid host name.
+        // senderConfiguration.setHostNameVerificationEnabled(false);
         return senderConfiguration;
     }
 }
