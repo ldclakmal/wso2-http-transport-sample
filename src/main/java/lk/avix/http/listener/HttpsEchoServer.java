@@ -10,14 +10,16 @@ import org.wso2.transport.http.netty.contractimpl.DefaultHttpWsConnectorFactory;
 
 import java.util.HashMap;
 
-import static org.wso2.transport.http.netty.contract.Constants.HTTP_SCHEME;
+import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
 
 /**
  * An HTTP server which implemented using wso2 http-transport.
  */
-public class HttpEchoServer {
+public class HttpsEchoServer {
 
     private static final int SERVER_PORT = 9191;
+    private static final String KEYSTORE_PATH = "/home/wso2/projects/http-transport-sample/src/main/resources/keystore/wso2carbon.jks";
+    private static final String KEYSTORE_PASS = "wso2carbon";
 
     public static void main(String[] args) throws InterruptedException {
         BasicConfigurator.configure();
@@ -33,7 +35,9 @@ public class HttpEchoServer {
     private static ListenerConfiguration getListenerConfiguration() {
         ListenerConfiguration listenerConfiguration = ListenerConfiguration.getDefault();
         listenerConfiguration.setPort(SERVER_PORT);
-        listenerConfiguration.setScheme(HTTP_SCHEME);
+        listenerConfiguration.setScheme(HTTPS_SCHEME);
+        listenerConfiguration.setKeyStoreFile(KEYSTORE_PATH);
+        listenerConfiguration.setKeyStorePass(KEYSTORE_PASS);
         return listenerConfiguration;
     }
 }

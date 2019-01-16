@@ -21,11 +21,11 @@ public class HttpsClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpsClient.class);
 
-    private static final int SERVER_PORT = 9095;
+    private static final int SERVER_PORT = 9191;
     private static final String SERVER_HOST = "localhost";
     private static final String SERVER_PATH = "/hello/sayHello";
-    private static final String TRUSTSTORE_PATH = "/home/chanaka/ballerina/bre/security/ballerinaTruststore.p12";
-    private static final String TRUSTSTORE_PASS = "ballerina";
+    private static final String TRUSTSTORE_PATH = "/home/wso2/projects/http-transport-sample/src/main/resources/truststore/client-truststore.jks";
+    private static final String TRUSTSTORE_PASS = "wso2carbon";
 
     public static void main(String[] args) {
         BasicConfigurator.configure();
