@@ -22,22 +22,25 @@ import java.util.concurrent.Executors;
 public class PassthroughMessageProcessor implements HttpConnectorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PassthroughMessageProcessor.class);
+
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private HttpClientConnector clientConnector;
     private HttpWsConnectorFactory httpWsConnectorFactory;
     private SenderConfiguration senderConfiguration;
+    private int serverPort;
 
-    PassthroughMessageProcessor(SenderConfiguration senderConfiguration) {
+    PassthroughMessageProcessor(SenderConfiguration senderConfiguration, int serverPort) {
         this.httpWsConnectorFactory = new DefaultHttpWsConnectorFactory();
         this.senderConfiguration = senderConfiguration;
+        this.serverPort = serverPort;
     }
 
     @Override
     public void onMessage(HttpCarbonMessage httpRequestMessage) {
         executor.execute(() -> {
-            httpRequestMessage.setProperty(Constants.HTTP_PORT, 9191);
+            httpRequestMessage.setProperty(Constants.HTTP_PORT, serverPort);
             try {
-                clientConnector = httpWsConnectorFactory.createHttpClientConnector(new HashMap<>(), senderConfiguration);
+                HttpClientConnector clientConnector = httpWsConnectorFactory
+                        .createHttpClientConnector(new HashMap<>(), senderConfiguration);
                 HttpResponseFuture future = clientConnector.send(httpRequestMessage);
                 future.setHttpConnectorListener(new HttpConnectorListener() {
                     @Override
@@ -67,4 +70,3 @@ public class PassthroughMessageProcessor implements HttpConnectorListener {
         LOG.error("Error occurred during message notification: {}", throwable.getMessage());
     }
 }
-

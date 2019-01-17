@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpClientConnector;
 import org.wso2.transport.http.netty.contract.HttpResponseFuture;
+import org.wso2.transport.http.netty.contract.config.ListenerConfiguration;
+import org.wso2.transport.http.netty.contract.config.SenderConfiguration;
 import org.wso2.transport.http.netty.message.HttpCarbonMessage;
 import org.wso2.transport.http.netty.message.HttpMessageDataStreamer;
 
@@ -20,9 +22,13 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
+import static org.wso2.transport.http.netty.contract.Constants.HTTP_SCHEME;
 
 /**
  * HTTP client utilities.
@@ -32,7 +38,7 @@ public class HttpUtil {
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
     public static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
-                                  int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
+                                         int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -71,5 +77,34 @@ public class HttpUtil {
         httpPostRequest.addHttpContent(new DefaultLastHttpContent(Unpooled.wrappedBuffer(byteBuffer)));
 
         return httpPostRequest;
+    }
+
+    public static SenderConfiguration getSenderConfiguration(Optional<String> truststorePath,
+                                                             Optional<String> truststorePass) {
+        SenderConfiguration senderConfiguration = new SenderConfiguration();
+        senderConfiguration.setScheme(Constants.HTTP_SCHEME);
+        if (truststorePath.isPresent() && truststorePass.isPresent()) {
+            senderConfiguration.setScheme(Constants.HTTPS_SCHEME);
+            senderConfiguration.setTrustStoreFile(truststorePath.get());
+            senderConfiguration.setTrustStorePass(truststorePass.get());
+            // Enable following property if the SERVER_HOST is an IP address. Since this is not recommended,
+            // please provide an valid host name.
+            // senderConfiguration.setHostNameVerificationEnabled(false);
+        }
+        return senderConfiguration;
+    }
+
+    public static ListenerConfiguration getListenerConfiguration(int serverPort, Optional<String> keystorePath,
+                                                                 Optional<String> keystorePass) {
+        ListenerConfiguration listenerConfiguration = ListenerConfiguration.getDefault();
+        listenerConfiguration.setPort(serverPort);
+        listenerConfiguration.setScheme(HTTP_SCHEME);
+        if (keystorePath.isPresent() && keystorePass.isPresent()) {
+            listenerConfiguration.setScheme(HTTPS_SCHEME);
+            listenerConfiguration.setKeyStoreFile(keystorePath.get());
+            listenerConfiguration.setKeyStorePass(keystorePass.get());
+        }
+
+        return listenerConfiguration;
     }
 }

@@ -7,12 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpClientConnector;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
-import org.wso2.transport.http.netty.contract.config.SenderConfiguration;
 import org.wso2.transport.http.netty.contractimpl.DefaultHttpWsConnectorFactory;
 
 import java.util.HashMap;
-
-import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
+import java.util.Optional;
 
 /**
  * An HTTPS client which implemented using wso2 http-transport.
@@ -31,7 +29,7 @@ public class HttpsClient {
         BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
         HttpClientConnector httpClientConnector = factory
-                .createHttpClientConnector(new HashMap<>(), getSenderConfigurationForHttp());
+                .createHttpClientConnector(new HashMap<>(), HttpUtil.getSenderConfiguration(Optional.of(TRUSTSTORE_PATH), Optional.of(TRUSTSTORE_PASS)));
 
         String payload = "Test value";
         HashMap<String, String> headers = new HashMap<>();
@@ -39,16 +37,5 @@ public class HttpsClient {
         String response = HttpUtil.sendPostRequest(httpClientConnector, Constants.HTTP_SCHEME, SERVER_HOST,
                 SERVER_PORT, SERVER_PATH, payload, headers);
         LOG.info("Response: {}", response);
-    }
-
-    private static SenderConfiguration getSenderConfigurationForHttp() {
-        SenderConfiguration senderConfiguration = new SenderConfiguration();
-        senderConfiguration.setTrustStoreFile(TRUSTSTORE_PATH);
-        senderConfiguration.setTrustStorePass(TRUSTSTORE_PASS);
-        senderConfiguration.setScheme(HTTPS_SCHEME);
-        // Enable following property if the SERVER_HOST is an IP address. Since this is not recommended, please provide
-        // an valid host name.
-        // senderConfiguration.setHostNameVerificationEnabled(false);
-        return senderConfiguration;
     }
 }

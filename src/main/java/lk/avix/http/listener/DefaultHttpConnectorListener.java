@@ -11,7 +11,6 @@ import java.util.concurrent.CountDownLatch;
 public class DefaultHttpConnectorListener implements HttpConnectorListener {
 
     private HttpCarbonMessage httpMessage;
-    private Throwable throwable;
     private CountDownLatch latch;
 
     public DefaultHttpConnectorListener(CountDownLatch latch) {
@@ -26,16 +25,10 @@ public class DefaultHttpConnectorListener implements HttpConnectorListener {
 
     @Override
     public void onError(Throwable throwable) {
-        this.throwable = throwable;
         latch.countDown();
     }
 
     public HttpCarbonMessage getHttpResponseMessage() {
         return httpMessage;
     }
-
-    public Throwable getHttpErrorMessage() {
-        return throwable;
-    }
 }
-

@@ -1,5 +1,6 @@
 package lk.avix.http.listener;
 
+import lk.avix.http.util.HttpUtil;
 import org.apache.log4j.BasicConfigurator;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
@@ -9,11 +10,10 @@ import org.wso2.transport.http.netty.contract.config.ServerBootstrapConfiguratio
 import org.wso2.transport.http.netty.contractimpl.DefaultHttpWsConnectorFactory;
 
 import java.util.HashMap;
-
-import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
+import java.util.Optional;
 
 /**
- * An HTTP server which implemented using wso2 http-transport.
+ * An HTTPS server which implemented using wso2 http-transport.
  */
 public class HttpsEchoServer {
 
@@ -24,7 +24,7 @@ public class HttpsEchoServer {
     public static void main(String[] args) throws InterruptedException {
         BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
-        ListenerConfiguration listenerConfiguration = getListenerConfiguration();
+        ListenerConfiguration listenerConfiguration = HttpUtil.getListenerConfiguration(SERVER_PORT, Optional.of(KEYSTORE_PATH), Optional.of(KEYSTORE_PASS));
         ServerConnector connector = factory
                 .createServerConnector(new ServerBootstrapConfiguration(new HashMap<>()), listenerConfiguration);
         ServerConnectorFuture future = connector.start();
@@ -32,12 +32,5 @@ public class HttpsEchoServer {
         future.sync();
     }
 
-    private static ListenerConfiguration getListenerConfiguration() {
-        ListenerConfiguration listenerConfiguration = ListenerConfiguration.getDefault();
-        listenerConfiguration.setPort(SERVER_PORT);
-        listenerConfiguration.setScheme(HTTPS_SCHEME);
-        listenerConfiguration.setKeyStoreFile(KEYSTORE_PATH);
-        listenerConfiguration.setKeyStorePass(KEYSTORE_PASS);
-        return listenerConfiguration;
-    }
+
 }
