@@ -23,24 +23,24 @@ public class PassthroughMessageProcessor implements HttpConnectorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PassthroughMessageProcessor.class);
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private HttpWsConnectorFactory httpWsConnectorFactory;
-    private SenderConfiguration senderConfiguration;
+    private ExecutorService executor = Executors.newFixedThreadPool(16);
+    private HttpClientConnector clientConnector;
     private int serverPort;
+    private String serverHost;
 
-    PassthroughMessageProcessor(SenderConfiguration senderConfiguration, int serverPort) {
-        this.httpWsConnectorFactory = new DefaultHttpWsConnectorFactory();
-        this.senderConfiguration = senderConfiguration;
+    PassthroughMessageProcessor(SenderConfiguration senderConfiguration, String serverHost, int serverPort) {
         this.serverPort = serverPort;
+        this.serverHost = serverHost;
+        HttpWsConnectorFactory httpWsConnectorFactory = new DefaultHttpWsConnectorFactory();
+        clientConnector = httpWsConnectorFactory.createHttpClientConnector(new HashMap<>(), senderConfiguration);
     }
 
     @Override
     public void onMessage(HttpCarbonMessage httpRequestMessage) {
         executor.execute(() -> {
+            httpRequestMessage.setProperty(Constants.HTTP_HOST, serverHost);
             httpRequestMessage.setProperty(Constants.HTTP_PORT, serverPort);
             try {
-                HttpClientConnector clientConnector = httpWsConnectorFactory
-                        .createHttpClientConnector(new HashMap<>(), senderConfiguration);
                 HttpResponseFuture future = clientConnector.send(httpRequestMessage);
                 future.setHttpConnectorListener(new HttpConnectorListener() {
                     @Override
