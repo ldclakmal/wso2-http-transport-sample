@@ -1,6 +1,6 @@
 package lk.avix.http.passthrough;
 
-import com.beust.jcommander.Parameter;
+import com.beust.jcommander.JCommander;
 import lk.avix.http.util.HttpUtil;
 import org.apache.log4j.BasicConfigurator;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
@@ -21,12 +21,11 @@ public class HttpPassthrough {
 
     private static final int CLIENT_PORT = 9090;
 
-    @Parameter(names = {"-host", "-h"}, description = "Backend host")
-    private static String host;
-    @Parameter(names = {"-port", "-p"}, description = "Backend port")
-    private static int port;
-
     public static void main(String[] args) throws InterruptedException {
+        Settings settings = new Settings();
+        JCommander jCommander = new JCommander(settings);
+        jCommander.parse(args);
+
         BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
@@ -37,7 +36,8 @@ public class HttpPassthrough {
 
         SenderConfiguration senderConfiguration = HttpUtil.getSenderConfiguration(Optional.empty(), Optional.empty());
         ServerConnectorFuture future = connector.start();
-        future.setHttpConnectorListener(new PassthroughMessageProcessor(senderConfiguration, host, port));
+        future.setHttpConnectorListener(
+                new PassthroughMessageProcessor(senderConfiguration, settings.getHost(), settings.getPort()));
         future.sync();
     }
 }
