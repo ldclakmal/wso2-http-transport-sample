@@ -31,6 +31,4 @@ public class HttpsEchoServer {
         future.setHttpConnectorListener(new EchoMessageListener());
         future.sync();
     }
-
-
 }
