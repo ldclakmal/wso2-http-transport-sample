@@ -35,8 +35,8 @@ public class HttpUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
-    public static String getSampleResponse(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
-                                           int serverPort, String serverPath) {
+    public static String getSampleResponse(HttpClientConnector httpClientConnector, String serverScheme,
+                                           String serverHost, int serverPort, String serverPath) {
         String payload = "Test value!";
         HashMap<String, String> headers = new HashMap<>();
         headers.put("Content-Type", "text/plain");
@@ -44,8 +44,9 @@ public class HttpUtil {
                 payload, headers);
     }
 
-    private static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
-                                          int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
+    private static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme,
+                                          String serverHost, int serverPort, String serverPath, String payload,
+                                          HashMap<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);
             for (Map.Entry<String, String> entry : headers.entrySet()) {

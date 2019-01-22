@@ -20,12 +20,14 @@ public class HttpClient {
     private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
 
     private static final boolean SSL = System.getProperty("ssl") != null;
-    private static final float HTTP_VERSION = (Integer.parseInt(System.getProperty("version", "1")) == 1) ? Constants.HTTP_1_1 : Constants.HTTP_2_0;
+    private static final float HTTP_VERSION = (Integer.parseInt(System.getProperty("version", "1")) == 1)
+            ? Constants.HTTP_1_1 : Constants.HTTP_2_0;
     private static final String SERVER_SCHEME = SSL ? Constants.HTTPS_SCHEME : Constants.HTTP_SCHEME;
     private static final String SERVER_HOST = System.getProperty("host", "localhost");
     private static final int SERVER_PORT = Integer.parseInt(System.getProperty("port", "9191"));
     private static final String SERVER_PATH = System.getProperty("path", "/hello/sayHello");
-    private static final String TRUSTSTORE_PATH = System.getProperty("truststorepath", HttpClient.class.getResource("/truststore/client-truststore.jks").getFile());
+    private static final String TRUSTSTORE_PATH = System.getProperty("truststorepath",
+            HttpClient.class.getResource("/truststore/client-truststore.jks").getFile());
     private static final String TRUSTSTORE_PASS = System.getProperty("truststorepass", "wso2carbon");
 
     public static void main(String[] args) {
