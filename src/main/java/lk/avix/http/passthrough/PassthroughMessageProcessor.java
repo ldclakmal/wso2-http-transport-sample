@@ -27,10 +27,13 @@ public class PassthroughMessageProcessor implements HttpConnectorListener {
     private HttpClientConnector clientConnector;
     private int serverPort;
     private String serverHost;
+    private String serverPath;
 
-    PassthroughMessageProcessor(SenderConfiguration senderConfiguration, String serverHost, int serverPort) {
+    PassthroughMessageProcessor(SenderConfiguration senderConfiguration, String serverHost, int serverPort,
+                                String serverPath) {
         this.serverPort = serverPort;
         this.serverHost = serverHost;
+        this.serverPath = serverPath;
         HttpWsConnectorFactory httpWsConnectorFactory = new DefaultHttpWsConnectorFactory();
         clientConnector = httpWsConnectorFactory.createHttpClientConnector(new HashMap<>(), senderConfiguration);
     }
@@ -40,6 +43,7 @@ public class PassthroughMessageProcessor implements HttpConnectorListener {
         executor.execute(() -> {
             httpRequestMessage.setProperty(Constants.HTTP_HOST, serverHost);
             httpRequestMessage.setProperty(Constants.HTTP_PORT, serverPort);
+            httpRequestMessage.setProperty(Constants.TO, serverPath);
             try {
                 HttpResponseFuture future = clientConnector.send(httpRequestMessage);
                 future.setHttpConnectorListener(new HttpConnectorListener() {

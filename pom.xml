@@ -72,17 +72,11 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>${jcommander.version}</version>
-        </dependency>
     </dependencies>
 
     <properties>
         <transport.http.version>6.0.252</transport.http.version>
         <slf4j.version>1.7.5</slf4j.version>
-        <jcommander.version>1.72</jcommander.version>
         <java.version>1.8</java.version>
     </properties>
 </project>

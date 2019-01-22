@@ -22,13 +22,11 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.wso2.transport.http.netty.contract.Constants.HTTPS_SCHEME;
-import static org.wso2.transport.http.netty.contract.Constants.HTTP_SCHEME;
 
 /**
  * HTTP client utilities.
@@ -37,8 +35,17 @@ public class HttpUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
-    public static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
-                                         int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
+    public static String getSampleResponse(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
+                                           int serverPort, String serverPath) {
+        String payload = "Test value!";
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "text/plain");
+        return HttpUtil.sendPostRequest(httpClientConnector, serverScheme, serverHost, serverPort, serverPath,
+                payload, headers);
+    }
+
+    private static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme, String serverHost,
+                                          int serverPort, String serverPath, String payload, HashMap<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -53,10 +60,9 @@ public class HttpUtil {
             latch.await(30, TimeUnit.SECONDS);
 
             HttpCarbonMessage response = listener.getHttpResponseMessage();
-            String responsePayload = new BufferedReader(
-                    new InputStreamReader(new HttpMessageDataStreamer(response).getInputStream())).lines()
+            return new BufferedReader(new InputStreamReader(
+                    new HttpMessageDataStreamer(response).getInputStream())).lines()
                     .collect(Collectors.joining("\n"));
-            return responsePayload;
         } catch (Exception e) {
             LOG.error("Exception occurred while running client", e);
             return "";
@@ -79,14 +85,14 @@ public class HttpUtil {
         return httpPostRequest;
     }
 
-    public static SenderConfiguration getSenderConfiguration(Optional<String> truststorePath,
-                                                             Optional<String> truststorePass) {
+    public static SenderConfiguration getSenderConfiguration(float httpVersion, String scheme, String truststorePath,
+                                                             String truststorePass) {
         SenderConfiguration senderConfiguration = new SenderConfiguration();
-        senderConfiguration.setScheme(Constants.HTTP_SCHEME);
-        if (truststorePath.isPresent() && truststorePass.isPresent()) {
-            senderConfiguration.setScheme(Constants.HTTPS_SCHEME);
-            senderConfiguration.setTrustStoreFile(truststorePath.get());
-            senderConfiguration.setTrustStorePass(truststorePass.get());
+        senderConfiguration.setScheme(scheme);
+        senderConfiguration.setHttpVersion(String.valueOf(httpVersion));
+        if (scheme.equals(HTTPS_SCHEME)) {
+            senderConfiguration.setTrustStoreFile(truststorePath);
+            senderConfiguration.setTrustStorePass(truststorePass);
             // Enable following property if the SERVER_HOST is an IP address. Since this is not recommended,
             // please provide an valid host name.
             // senderConfiguration.setHostNameVerificationEnabled(false);
@@ -94,15 +100,15 @@ public class HttpUtil {
         return senderConfiguration;
     }
 
-    public static ListenerConfiguration getListenerConfiguration(int serverPort, Optional<String> keystorePath,
-                                                                 Optional<String> keystorePass) {
+    public static ListenerConfiguration getListenerConfiguration(float httpVersion, int port, String scheme,
+                                                                 String keystorePath, String keystorePass) {
         ListenerConfiguration listenerConfiguration = ListenerConfiguration.getDefault();
-        listenerConfiguration.setPort(serverPort);
-        listenerConfiguration.setScheme(HTTP_SCHEME);
-        if (keystorePath.isPresent() && keystorePass.isPresent()) {
-            listenerConfiguration.setScheme(HTTPS_SCHEME);
-            listenerConfiguration.setKeyStoreFile(keystorePath.get());
-            listenerConfiguration.setKeyStorePass(keystorePass.get());
+        listenerConfiguration.setScheme(scheme);
+        listenerConfiguration.setVersion(String.valueOf(httpVersion));
+        listenerConfiguration.setPort(port);
+        if (scheme.equals(HTTPS_SCHEME)) {
+            listenerConfiguration.setKeyStoreFile(keystorePath);
+            listenerConfiguration.setKeyStorePass(keystorePass);
         }
 
         return listenerConfiguration;
