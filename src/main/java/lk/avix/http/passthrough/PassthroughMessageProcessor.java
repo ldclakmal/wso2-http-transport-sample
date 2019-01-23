@@ -23,7 +23,7 @@ public class PassthroughMessageProcessor implements HttpConnectorListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(PassthroughMessageProcessor.class);
 
-    private ExecutorService executor = Executors.newFixedThreadPool(16);
+    private ExecutorService executor = Executors.newFixedThreadPool(100);
     private HttpClientConnector clientConnector;
     private int serverPort;
     private String serverHost;
