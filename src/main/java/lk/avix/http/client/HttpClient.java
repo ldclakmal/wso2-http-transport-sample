@@ -12,6 +12,8 @@ import org.wso2.transport.http.netty.contractimpl.DefaultHttpWsConnectorFactory;
 
 import java.util.HashMap;
 
+import static org.wso2.transport.http.netty.contract.Constants.TEXT_PLAIN;
+
 /**
  * An HTTP client which implemented using wso2 http-transport.
  */
@@ -39,7 +41,12 @@ public class HttpClient {
         HttpClientConnector httpClientConnector =
                 factory.createHttpClientConnector(new HashMap<>(), senderConfiguration);
 
-        String response = HttpUtil.getSampleResponse(httpClientConnector, SERVER_SCHEME, SERVER_HOST, SERVER_PORT, SERVER_PATH);
+        String payload = "Test value!";
+        HashMap<String, String> headerMap = new HashMap<>();
+        headerMap.put("Content-Type", TEXT_PLAIN);
+
+        String response = HttpUtil.sendPostRequest(httpClientConnector, SERVER_SCHEME, SERVER_HOST, SERVER_PORT,
+                SERVER_PATH, payload, headerMap);
         LOG.info("Response: {}", response);
     }
 }

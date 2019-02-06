@@ -15,6 +15,7 @@ import java.util.HashMap;
 /**
  * An HTTP server which implemented using wso2 http-transport.
  */
+@SuppressWarnings("Duplicates")
 public class HttpEchoServer {
 
     private static final boolean SSL = System.getProperty("ssl") != null;

@@ -16,6 +16,7 @@ import java.util.HashMap;
 /**
  * An HTTP passthrough service which implemented using wso2 http-transport.
  */
+@SuppressWarnings("Duplicates")
 public class HttpPassthrough {
 
     private static final int LISTENER_PORT = 9090;

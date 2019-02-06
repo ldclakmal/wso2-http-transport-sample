@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -35,18 +34,9 @@ public class HttpUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpUtil.class);
 
-    public static String getSampleResponse(HttpClientConnector httpClientConnector, String serverScheme,
-                                           String serverHost, int serverPort, String serverPath) {
-        String payload = "Test value!";
-        HashMap<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "text/plain");
-        return HttpUtil.sendPostRequest(httpClientConnector, serverScheme, serverHost, serverPort, serverPath,
-                payload, headers);
-    }
-
-    private static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme,
-                                          String serverHost, int serverPort, String serverPath, String payload,
-                                          HashMap<String, String> headers) {
+    public static String sendPostRequest(HttpClientConnector httpClientConnector, String serverScheme,
+                                         String serverHost, int serverPort, String serverPath, String payload,
+                                         Map<String, String> headers) {
         try {
             HttpCarbonMessage msg = createHttpPostReq(serverScheme, serverHost, serverPort, serverPath, payload);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -66,7 +56,7 @@ public class HttpUtil {
                     .collect(Collectors.joining("\n"));
         } catch (Exception e) {
             LOG.error("Exception occurred while running client", e);
-            return "";
+            return e.getMessage();
         }
     }
 
@@ -111,7 +101,6 @@ public class HttpUtil {
             listenerConfiguration.setKeyStoreFile(keystorePath);
             listenerConfiguration.setKeyStorePass(keystorePass);
         }
-
         return listenerConfiguration;
     }
 }
