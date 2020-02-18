@@ -1,4 +1,4 @@
-# HTTP Transport Sample
+# WSO2 HTTP Transport Sample
 This repository holds samples of HTTP transport implemented using [WSO2 HTTP Transport](https://github.com/wso2/transport-http).
 
 ## Samples
