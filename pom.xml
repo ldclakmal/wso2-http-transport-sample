@@ -7,7 +7,7 @@
     <groupId>lk.avix</groupId>
     <artifactId>http-transport-sample</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <build>
         <finalName>wso2-http-transport</finalName>
