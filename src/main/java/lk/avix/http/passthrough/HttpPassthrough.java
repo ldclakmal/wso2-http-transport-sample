@@ -1,7 +1,6 @@
 package lk.avix.http.passthrough;
 
 import lk.avix.http.util.HttpUtil;
-import org.apache.log4j.BasicConfigurator;
 import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
@@ -36,7 +35,6 @@ public class HttpPassthrough {
     private static final String TRUSTSTORE_PASS = System.getProperty("truststorepass", "wso2carbon");
 
     public static void main(String[] args) throws InterruptedException {
-        BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
         ListenerConfiguration listenerConfiguration =

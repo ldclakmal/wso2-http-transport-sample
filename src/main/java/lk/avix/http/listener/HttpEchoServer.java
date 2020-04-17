@@ -1,7 +1,6 @@
 package lk.avix.http.listener;
 
 import lk.avix.http.util.HttpUtil;
-import org.apache.log4j.BasicConfigurator;
 import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
@@ -28,7 +27,6 @@ public class HttpEchoServer {
     private static final String KEYSTORE_PASS = System.getProperty("keystorepass", "wso2carbon");
 
     public static void main(String[] args) throws InterruptedException {
-        BasicConfigurator.configure();
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
         ListenerConfiguration listenerConfiguration =
