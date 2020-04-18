@@ -16,39 +16,37 @@ public class Bootstrap {
     }
 
     @Parameter(names = "--type", description = "Type of Program", required = true)
-    private static TYPE type;
+    private TYPE type;
 
     @Parameter(names = "--ssl", description = "Enable SSL", arity = 1)
-    private static boolean ssl = false;
+    private boolean ssl = false;
 
     @Parameter(names = "--http2", description = "Use HTTP/2 protocol instead of HTTP/1.1", arity = 1)
-    private static boolean http2 = false;
+    private boolean http2 = false;
 
     @Parameter(names = "--listener-port", description = "Listener Port")
-    private static int listenerPort = 9090;
+    private int listenerPort = 9090;
 
     @Parameter(names = "--server-host", description = "Server Host")
-    private static String serverHost = "localhost";
+    private String serverHost = "localhost";
 
     @Parameter(names = "--server-port", description = "Server Port")
-    private static int serverPort = 9191;
+    private int serverPort = 9191;
 
     @Parameter(names = "--server-path", description = "Server Path")
-    private static String serverPath = "/hello/sayHello";
+    private String serverPath = "/hello/sayHello";
 
     @Parameter(names = "--keystore-path", description = "Keystore Path")
-    private static String keystorePath =
-            "/home/wso2/projects/ldclakmal/wso2-http-transport-sample/src/main/resources/keystore/wso2carbon.jks";
+    private String keystorePath;
 
     @Parameter(names = "--keystore-pass", description = "Keystore Password")
-    private static String keystorePass = "wso2carbon";
+    private String keystorePass = "wso2carbon";
 
     @Parameter(names = "--truststore-path", description = "Truststore Path")
-    private static String truststorePath = "/home/wso2/projects/ldclakmal/wso2-http-transport-sample/src/main" +
-            "/resources/truststore/client-truststore.jks";
+    private String truststorePath;
 
     @Parameter(names = "--truststore-pass", description = "Truststore Password")
-    private static String truststorePass = "wso2carbon";
+    private String truststorePass = "wso2carbon";
 
     public static void main(String[] args) {
         Bootstrap bootstrap = new Bootstrap();
