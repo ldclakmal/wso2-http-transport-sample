@@ -45,7 +45,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <manifestEntries>
-                                        <Main-Class>lk.avix.http</Main-Class>
+                                        <Main-Class>lk.avix.http.util.Bootstrap</Main-Class>
                                     </manifestEntries>
                                 </transformer>
                             </transformers>
