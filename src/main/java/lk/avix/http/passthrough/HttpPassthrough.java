@@ -1,7 +1,8 @@
 package lk.avix.http.passthrough;
 
+import com.beust.jcommander.Parameter;
+import lk.avix.http.client.HttpClient;
 import lk.avix.http.util.HttpUtil;
-import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
 import org.wso2.transport.http.netty.contract.ServerConnectorFuture;
@@ -18,35 +19,52 @@ import java.util.HashMap;
 @SuppressWarnings("Duplicates")
 public class HttpPassthrough {
 
-    private static final int LISTENER_PORT = 9090;
-    private static final String KEYSTORE_PATH = System.getProperty("keystorepath",
-            HttpPassthrough.class.getResource("/keystore/wso2carbon.jks").getFile());
-    private static final String KEYSTORE_PASS = System.getProperty("keystorepass", "wso2carbon");
+    @Parameter(names = "--ssl", description = "Enable SSL", arity = 1)
+    private static boolean ssl = false;
 
-    private static final boolean SSL = System.getProperty("ssl") != null;
-    private static final float HTTP_VERSION = (Integer.parseInt(System.getProperty("version", "1")) == 1)
-            ? Constants.HTTP_1_1 : Constants.HTTP_2_0;
-    private static final String SCHEME = SSL ? Constants.HTTPS_SCHEME : Constants.HTTP_SCHEME;
-    private static final String SERVER_HOST = System.getProperty("host", "localhost");
-    private static final int SERVER_PORT = Integer.parseInt(System.getProperty("port", "9191"));
-    private static final String SERVER_PATH = System.getProperty("path", "/hello/sayHello");
-    private static final String TRUSTSTORE_PATH = System.getProperty("truststorepath",
-            HttpPassthrough.class.getResource("/truststore/client-truststore.jks").getFile());
-    private static final String TRUSTSTORE_PASS = System.getProperty("truststorepass", "wso2carbon");
+    @Parameter(names = "--http2", description = "Use HTTP/2 protocol instead of HTTP/1.1", arity = 1)
+    private static boolean http2 = false;
+
+    @Parameter(names = "--listener-port", description = "Listener Port")
+    private static int listenerPort = 9090;
+
+    @Parameter(names = "--server-host", description = "Server Host")
+    private static String serverHost = "localhost";
+
+    @Parameter(names = "--server-port", description = "Server Port")
+    private static int serverPort = 9191;
+
+    @Parameter(names = "--server-path", description = "Server Path")
+    private static String serverPath = "/hello/sayHello";
+
+    @Parameter(names = "--truststore-path", description = "Truststore Path")
+    private static String truststorePath = HttpClient.class.getResource("/truststore/client-truststore.jks").getFile();
+
+    @Parameter(names = "--truststore-pass", description = "Truststore Password")
+    private static String truststorePass = "wso2carbon";
+
+    @Parameter(names = "--keystore-path", description = "Keystore Path")
+    private static String keystorePath = HttpClient.class.getResource("/keystore/wso2carbon.jks").getFile();
+
+    @Parameter(names = "--keystore-pass", description = "Keystore Password")
+    private static String keystorePass = "wso2carbon";
 
     public static void main(String[] args) throws InterruptedException {
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
+        float httpVersion = http2 ? 2.0f : 1.1f;
+        String scheme = ssl ? "https" : "http";
+
         ListenerConfiguration listenerConfiguration =
-                HttpUtil.getListenerConfiguration(HTTP_VERSION, LISTENER_PORT, SCHEME, KEYSTORE_PATH, KEYSTORE_PASS);
+                HttpUtil.getListenerConfiguration(httpVersion, listenerPort, scheme, keystorePath, keystorePass);
         ServerConnector connector =
                 factory.createServerConnector(new ServerBootstrapConfiguration(new HashMap<>()), listenerConfiguration);
         ServerConnectorFuture future = connector.start();
 
         SenderConfiguration senderConfiguration =
-                HttpUtil.getSenderConfiguration(HTTP_VERSION, SCHEME, TRUSTSTORE_PATH, TRUSTSTORE_PASS);
+                HttpUtil.getSenderConfiguration(httpVersion, scheme, truststorePath, truststorePass);
         future.setHttpConnectorListener(
-                new PassthroughMessageProcessor(senderConfiguration, SERVER_HOST, SERVER_PORT, SERVER_PATH));
+                new PassthroughMessageProcessor(senderConfiguration, serverHost, serverPort, serverPath));
         future.sync();
     }
 }

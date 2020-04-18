@@ -1,7 +1,8 @@
 package lk.avix.http.listener;
 
+import com.beust.jcommander.Parameter;
+import lk.avix.http.client.HttpClient;
 import lk.avix.http.util.HttpUtil;
-import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.ServerConnector;
 import org.wso2.transport.http.netty.contract.ServerConnectorFuture;
@@ -17,20 +18,35 @@ import java.util.HashMap;
 @SuppressWarnings("Duplicates")
 public class HttpEchoServer {
 
-    private static final boolean SSL = System.getProperty("ssl") != null;
-    private static final float HTTP_VERSION = (Integer.parseInt(System.getProperty("version", "1")) == 1)
-            ? Constants.HTTP_1_1 : Constants.HTTP_2_0;
-    private static final String SERVER_SCHEME = SSL ? Constants.HTTPS_SCHEME : Constants.HTTP_SCHEME;
-    private static final int SERVER_PORT = Integer.parseInt(System.getProperty("port", "9191"));
-    private static final String KEYSTORE_PATH = System.getProperty("keystorepath",
-            HttpEchoServer.class.getResource("/keystore/wso2carbon.jks").getFile());
-    private static final String KEYSTORE_PASS = System.getProperty("keystorepass", "wso2carbon");
+    @Parameter(names = "--ssl", description = "Enable SSL", arity = 1)
+    private static boolean ssl = false;
+
+    @Parameter(names = "--http2", description = "Use HTTP/2 protocol instead of HTTP/1.1", arity = 1)
+    private static boolean http2 = false;
+
+    @Parameter(names = "--server-host", description = "Server Host")
+    private static String serverHost = "localhost";
+
+    @Parameter(names = "--server-port", description = "Server Port")
+    private static int serverPort = 9191;
+
+    @Parameter(names = "--keystore-path", description = "Keystore Path")
+    private static String keystorePath =
+            HttpClient.class.getClassLoader().getResource("/keystore/wso2carbon.jks").getFile();
+
+    @Parameter(names = "--keystore-pass", description = "Keystore Password")
+    private static String keystorePass = "wso2carbon";
 
     public static void main(String[] args) throws InterruptedException {
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
+        float httpVersion = http2 ? 2.0f : 1.1f;
+        String serverScheme = ssl ? "https" : "http";
+
+        System.out.println(serverScheme);
+
         ListenerConfiguration listenerConfiguration =
-                HttpUtil.getListenerConfiguration(HTTP_VERSION, SERVER_PORT, SERVER_SCHEME, KEYSTORE_PATH, KEYSTORE_PASS);
+                HttpUtil.getListenerConfiguration(httpVersion, serverPort, serverScheme, keystorePath, keystorePass);
         ServerConnector connector =
                 factory.createServerConnector(new ServerBootstrapConfiguration(new HashMap<>()), listenerConfiguration);
         ServerConnectorFuture future = connector.start();

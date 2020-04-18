@@ -1,9 +1,9 @@
 package lk.avix.http.client;
 
+import com.beust.jcommander.Parameter;
 import lk.avix.http.util.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.transport.http.netty.contract.Constants;
 import org.wso2.transport.http.netty.contract.HttpClientConnector;
 import org.wso2.transport.http.netty.contract.HttpWsConnectorFactory;
 import org.wso2.transport.http.netty.contract.config.SenderConfiguration;
@@ -20,22 +20,35 @@ public class HttpClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpClient.class);
 
-    private static final boolean SSL = System.getProperty("ssl") != null;
-    private static final float HTTP_VERSION = (Integer.parseInt(System.getProperty("version", "1")) == 1)
-            ? Constants.HTTP_1_1 : Constants.HTTP_2_0;
-    private static final String SERVER_SCHEME = SSL ? Constants.HTTPS_SCHEME : Constants.HTTP_SCHEME;
-    private static final String SERVER_HOST = System.getProperty("host", "localhost");
-    private static final int SERVER_PORT = Integer.parseInt(System.getProperty("port", "9191"));
-    private static final String SERVER_PATH = System.getProperty("path", "/hello/sayHello");
-    private static final String TRUSTSTORE_PATH = System.getProperty("truststorepath",
-            HttpClient.class.getResource("/truststore/client-truststore.jks").getFile());
-    private static final String TRUSTSTORE_PASS = System.getProperty("truststorepass", "wso2carbon");
+    @Parameter(names = "--ssl", description = "Enable SSL", arity = 1)
+    private static boolean ssl = false;
+
+    @Parameter(names = "--http2", description = "Use HTTP/2 protocol instead of HTTP/1.1", arity = 1)
+    private static boolean http2 = false;
+
+    @Parameter(names = "--server-host", description = "Server Host")
+    private static String serverHost = "localhost";
+
+    @Parameter(names = "--server-port", description = "Server Port")
+    private static int serverPort = 9191;
+
+    @Parameter(names = "--server-path", description = "Server Path")
+    private static String serverPath = "/hello/sayHello";
+
+    @Parameter(names = "--truststore-path", description = "Truststore Path")
+    private static String truststorePath = HttpClient.class.getResource("/truststore/client-truststore.jks").getFile();
+
+    @Parameter(names = "--truststore-pass", description = "Truststore Password")
+    private static String truststorePass = "wso2carbon";
 
     public static void main(String[] args) {
         HttpWsConnectorFactory factory = new DefaultHttpWsConnectorFactory();
 
+        float httpVersion = http2 ? 2.0f : 1.1f;
+        String scheme = ssl ? "https" : "http";
+
         SenderConfiguration senderConfiguration =
-                HttpUtil.getSenderConfiguration(HTTP_VERSION, SERVER_SCHEME, TRUSTSTORE_PATH, TRUSTSTORE_PASS);
+                HttpUtil.getSenderConfiguration(httpVersion, scheme, truststorePath, truststorePass);
         HttpClientConnector httpClientConnector =
                 factory.createHttpClientConnector(new HashMap<>(), senderConfiguration);
 
@@ -43,8 +56,8 @@ public class HttpClient {
         HashMap<String, String> headerMap = new HashMap<>();
         headerMap.put("Content-Type", TEXT_PLAIN);
 
-        String response = HttpUtil.sendPostRequest(httpClientConnector, SERVER_SCHEME, SERVER_HOST, SERVER_PORT,
-                SERVER_PATH, payload, headerMap);
+        String response = HttpUtil.sendPostRequest(httpClientConnector, scheme, serverHost, serverPort, serverPath,
+                                                   payload, headerMap);
         LOG.info("Response: {}", response);
     }
 }
